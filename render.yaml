@@ -1,0 +1,14 @@
+# render.yaml
+
+services:
+  - type: web
+    name: calculator-csv
+    env: java
+    branch: develop
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -jar target/*.jar
+
+
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
