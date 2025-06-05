@@ -1,12 +1,8 @@
-# -----------------------
-# 1. Stage: build with Maven
-# -----------------------
+
 FROM maven:3.8.7-eclipse-temurin-17 AS build
 
-# Ustaw katalog roboczy wewnątrz kontenera
 WORKDIR /app
 
-# Skopiuj pliki pom.xml i źródła
 COPY pom.xml .
 COPY src ./src
 
