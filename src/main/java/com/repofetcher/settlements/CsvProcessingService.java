@@ -452,8 +452,18 @@ public class CsvProcessingService {
         CSVPrinter printer = new CSVPrinter(writer, csvFormat);
 
         for (var entry : allDriversData.entrySet()) {
-            String kierowca = entry.getKey();      // to jest już „znormalizowany” identyfikator
+            String kierowca = entry.getKey();// to jest już „znormalizowany” identyfikator
+            if (kierowca.equals("pawel giecold")) {
+                continue;
+            }
+            if (kierowca.equals("paweł giecold")) {
+                continue;
+            }
+            if (kierowca.equals("paweł giecołd")) {
+                continue;
+            }
             DriverData data = entry.getValue();
+
 
             // ─── Pobranie „surowych” sum z DriverData ───
             BigDecimal totalBoltNetRaw     = data.getBoltNetRaw();
