@@ -65,6 +65,7 @@
     </dependencies>
 
     <build>
+        <!-- wyłączamy filtrowanie zasobów, żeby nie próbowało przepisywać plików properties -->
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -73,6 +74,7 @@
         </resources>
 
         <plugins>
+            <!-- 1) kompilator Javy do wersji 17 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -82,6 +84,7 @@
                 </configuration>
             </plugin>
 
+            <!-- 2) ustawienie kodowania zasobów na UTF-8 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -89,6 +92,20 @@
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
+            </plugin>
+
+            <!-- 3) Spring Boot Maven Plugin dodaje wpis Main-Class i spakowuje wszystkie zależności -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
