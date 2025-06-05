@@ -63,7 +63,6 @@ public class CsvProcessingService {
             "kinga mikołajczyk",
             "przemysław tartanus"
             // dodaj tu pozostałych, którzy dzielą 50/50
-            // np. "przemysław tartanus", "kinga mikołajczyk", ...
     );
 
     // Stałe bonusy od firmy (bez dzielenia paliwa ani VAT itp.)
