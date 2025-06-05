@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Kalkulator do raportów - Exmar sp. z o.o.</title>
+
+    <style>
+        /* Przyjemniejszy font i wąski kontener */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Wiadomości sukcesu / błędu */
+        .message {
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+        .message.success {
+            background-color: #e6f4ea;
+            color: #217a4b;
+            border: 1px solid #c7e8d1;
+        }
+        .message.error {
+            background-color: #fdecea;
+            color: #a12d2f;
+            border: 1px solid #f2c2c2;
+        }
+
+        /* Licznik plików */
+        .files-count {
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+
+        /* Drop-zone i lista plików */
+        #drop-zone {
+            border: 2px dashed #bbb;
+            border-radius: 6px;
+            padding: 30px;
+            text-align: center;
+            color: #555;
+            background-color: #fff;
+            transition: background-color 0.2s, border-color 0.2s;
+            max-width: 100%;
+            margin: 0 auto 20px auto;
+        }
+        #drop-zone.hover {
+            border-color: #888;
+            background-color: #fafafa;
+        }
+        #drop-zone p {
+            margin: 0;
+            font-size: 1rem;
+        }
+        #select-files-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+        #select-files-btn:hover {
+            background-color: #357ab8;
+        }
+        #file-input {
+            display: none;
+        }
+
+        #file-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+        }
+        #file-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fafafa;
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+        #file-list li .remove-btn {
+            background: none;
+            border: none;
+            color: #c00;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            line-height: 1;
+        }
+        #file-list li .remove-btn:hover {
+            color: #800;
+        }
+
+        /* Przycisk Załaduj pliki */
+        #upload-btn {
+            display: block;
+            margin: 0 auto 30px auto;
+            padding: 10px 22px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        #upload-btn:disabled {
+            background-color: #bbb;
+            cursor: default;
+        }
+        #upload-btn:hover:not(:disabled) {
+            background-color: #1e7e34;
+        }
+
+        /* Formularze CSV/Reset */
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .actions button {
+            flex: 1;
+            padding: 10px 0;
+            font-size: 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #fff;
+        }
+        .actions .generate-btn {
+            background-color: #0069d9;
+        }
+        .actions .generate-btn:disabled {
+            background-color: #aac4e8;
+            cursor: default;
+        }
+        .actions .generate-btn:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+        .actions .reset-btn {
+            background-color: #dc3545;
+        }
+        .actions .reset-btn:hover {
+            background-color: #b02a37;
+        }
+
+        /* Stopka „created by” */
+        .footer {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            margin: 30px 0 10px 0;
+        }
+
+        /* Responsywność */
+        @media (max-width: 500px) {
+            .actions {
+                flex-direction: column;
+            }
+            .actions button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h2>Kalkulator do raportów - Exmar sp. z o.o.</h2>
+
+    <!-- Komunikaty sukcesu / błędu -->
+    <div th:if="${successMessage}" class="message success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}"   class="message error"   th:text="${errorMessage}"></div>
+
+    <p class="files-count">
+        Dodano plików: <strong th:text="${filesCount}">0</strong>
+    </p>
+
+    <!-- Strefa drag & drop i lista plików -->
+    <div id="drop-zone">
+        <p>Przeciągnij tutaj pliki lub</p>
+        <button type="button" id="select-files-btn">Wybierz pliki</button>
+        <input type="file" id="file-input" multiple />
+    </div>
+
+    <ul id="file-list"></ul>
+
+    <button type="button" id="upload-btn" disabled>Załaduj pliki</button>
+
+    <!-- Formularz generowania CSV i resetu -->
+    <div class="actions">
+        <form th:action="@{/generate}" method="post" style="flex: 2;">
+            <button type="submit"
+                    class="generate-btn"
+                    th:disabled="${filesCount == null or filesCount < 2}">
+                Generuj raport CSV
+            </button>
+        </form>
+        <form th:action="@{/reset}" method="post" style="flex: 1;">
+            <button type="submit" class="reset-btn">Resetuj</button>
+        </form>
+    </div>
+</div>
+
+<!-- Stopka na samym dole strony -->
+<div class="footer">
+    stworzone przez Paweł Janowicz
+</div>
+
+<script>
+    (function() {
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const selectFilesBtn = document.getElementById('select-files-btn');
+        const fileListUl = document.getElementById('file-list');
+        const uploadBtn = document.getElementById('upload-btn');
+
+        // Tablica z plikami wybieranymi lokalnie
+        let filesQueue = [];
+
+        function renderFileList() {
+            fileListUl.innerHTML = '';
+            filesQueue.forEach((file, idx) => {
+                const li = document.createElement('li');
+                li.textContent = file.name;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = '✖';
+                removeBtn.classList.add('remove-btn');
+                removeBtn.addEventListener('click', () => {
+                    filesQueue.splice(idx, 1);
+                    renderFileList();
+                    uploadBtn.disabled = filesQueue.length === 0;
+                });
+
+                li.appendChild(removeBtn);
+                fileListUl.appendChild(li);
+            });
+        }
+
+        function addFiles(newFiles) {
+            for (let f of newFiles) {
+                const exists = filesQueue.some(existing =>
+                    existing.name === f.name && existing.size === f.size
+                );
+                if (!exists) {
+                    filesQueue.push(f);
+                }
+            }
+            renderFileList();
+            uploadBtn.disabled = filesQueue.length === 0;
+        }
+
+        async function uploadAllFiles() {
+            if (filesQueue.length === 0) return;
+            uploadBtn.disabled = true;
+            for (let file of filesQueue) {
+                const formData = new FormData();
+                formData.append('file', file);
+                try {
+                    await fetch('/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                } catch (err) {
+                    console.error('Błąd przy wysyłce pliku', file.name, err);
+                }
+            }
+            // Po wgraniu odświeżamy stronę, aby zaktualizować licznik wgranych plików
+            window.location.reload();
+        }
+
+        // Obsługa drag & drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('hover');
+        });
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('hover');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('hover');
+            const dt = e.dataTransfer;
+            if (dt && dt.files && dt.files.length) {
+                addFiles(dt.files);
+            }
+        });
+
+        // Obsługa przycisku "Wybierz pliki"
+        selectFilesBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+        fileInput.addEventListener('change', (e) => {
+            addFiles(e.target.files);
+            fileInput.value = '';
+        });
+
+        // Obsługa "Załaduj pliki" przycisku
+        uploadBtn.addEventListener('click', () => {
+            uploadAllFiles();
+        });
+
+        uploadBtn.disabled = true;
+    })();
+</script>
+</body>
+</html>
