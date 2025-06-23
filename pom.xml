@@ -17,7 +17,6 @@
     <name>settlements</name>
 
     <properties>
-        <!-- Zmienione na 17, bo obraz Dockera używa JDK 17 -->
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -65,7 +64,6 @@
     </dependencies>
 
     <build>
-        <!-- wyłączamy filtrowanie zasobów, żeby nie próbowało przepisywać plików properties -->
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -74,7 +72,6 @@
         </resources>
 
         <plugins>
-            <!-- 1) kompilator Javy do wersji 17 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -83,8 +80,6 @@
                     <release>17</release>
                 </configuration>
             </plugin>
-
-            <!-- 2) ustawienie kodowania zasobów na UTF-8 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -93,8 +88,6 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-
-            <!-- 3) Spring Boot Maven Plugin dodaje wpis Main-Class i spakowuje wszystkie zależności -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
