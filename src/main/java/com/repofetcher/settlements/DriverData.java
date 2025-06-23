@@ -5,16 +5,16 @@ import java.math.BigDecimal;
 public class DriverData {
     private final String driverIdentifier;
 
-    private BigDecimal totalBoltNetRaw           = BigDecimal.ZERO;
-    private BigDecimal totalBoltCashRaw          = BigDecimal.ZERO;
-    private BigDecimal totalBoltTipsRaw          = BigDecimal.ZERO;
+    private BigDecimal totalBoltNetRaw = BigDecimal.ZERO;
+    private BigDecimal totalBoltCashRaw = BigDecimal.ZERO;
+    private BigDecimal totalBoltTipsRaw = BigDecimal.ZERO;
     private BigDecimal totalBoltBonusOrCancelRaw = BigDecimal.ZERO;
 
-    private BigDecimal totalUberNetRaw           = BigDecimal.ZERO;
-    private BigDecimal totalUberCashRaw          = BigDecimal.ZERO;
+    private BigDecimal totalUberNetRaw = BigDecimal.ZERO;
+    private BigDecimal totalUberCashRaw = BigDecimal.ZERO;
 
-    private BigDecimal totalFreeNowNetRaw        = BigDecimal.ZERO;
-    private BigDecimal totalFreeNowCashRaw       = BigDecimal.ZERO;
+    private BigDecimal totalFreeNowNetRaw = BigDecimal.ZERO;
+    private BigDecimal totalFreeNowCashRaw = BigDecimal.ZERO;
 
     public DriverData(String driverIdentifier) {
         this.driverIdentifier = driverIdentifier;
